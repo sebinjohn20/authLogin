@@ -20,6 +20,7 @@ const userAuth = async (req, res, next) => {
       });
     }
 
+    // Attach userId to req
     req.userId = decoded.id;
 
     next();
