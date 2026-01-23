@@ -7,7 +7,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 // Create context
 export const AppContext = createContext(null);
-
+axios.defaults.withCredentials = true;
 // Context Provider
 export const AppContextProvider = ({ children }) => {
   const [isLoggedin, setIsLoggedin] = useState(false);
@@ -49,3 +49,5 @@ export const AppContextProvider = ({ children }) => {
     </AppContext.Provider>
   );
 };
+
+///dsfdsfdsfdfdsfdfdfdsfdsfdsfdsfdfdsfdfdsfdsfdsfdsf

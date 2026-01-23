@@ -3,7 +3,10 @@ import jwt from "jsonwebtoken";
 import User from "../Models/userModel.js"; // Make sure file is named userModel.js
 import transporter from "../config/nodemailer.js";
 import userModel from "../Models/userModel.js";
-import { response } from "express";
+import {
+  EMAIL_VERIFY_TEMPLATE,
+  PASSWORD_RESET_TEMPLATE,
+} from "../config/emailTem.js";
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body; // Fixed typo
@@ -147,7 +150,11 @@ export const sendVerifyOtp = async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to: user.email,
       subject: "Account Verification OTP",
-      text: `Your OTP is ${otp}`,
+      // text: `Your OTP is ${otp}`,
+      html: EMAIL_VERIFY_TEMPLATE.replace("{{otp}}", otp).replace(
+        "{{email}}",
+        user.email,
+      ),
     });
 
     res.json({ success: true, message: "OTP sent successfully" });
@@ -230,7 +237,11 @@ export const sendResetOtp = async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to: user.email,
       subject: "Password Reset OTP",
-      text: `Your OTP for resetting your password is ${otp}. This OTP is valid for 15 minutes.`,
+      // text: `Your OTP for resetting your password is ${otp}. This OTP is valid for 15 minutes.`,
+      html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp).replace(
+        "{{email}}",
+        user.email,
+      ),
     });
 
     return res.status(200).json({

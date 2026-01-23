@@ -1,7 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { parsePath, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 export default function Navbar() {
   const navigate = useNavigate();
   const {
@@ -12,6 +14,34 @@ export default function Navbar() {
 
     setUserData,
   } = useContext(AppContext);
+
+  const logout = async () => {
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(backendUrl + "/api/auth/logout");
+      data.success && setIsLoggedin(false);
+      data.success && setUserData(false);
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  const sendverificationOtp = async () => {
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(
+        backendUrl + "/api/auth/send-verify-otp",
+      );
+      if (data.success) {
+        navigate("/email-verify");
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <nav className="w-full flex justify-between items-center px-6 sm:px-24 py-4 absolute top-0 z-50">
       {/* Logo */}
@@ -27,8 +57,21 @@ export default function Navbar() {
           {userData.name[0].toUpperCase()}
           <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-10">
             <ul className="list-none m-0 p-2 bg-gray-100 text-sm">
-              <li className="">Verify email</li>
-              <li>Logout</li>
+              {!userData.isAccountVerified && (
+                <li
+                  className="py-1 px-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={sendverificationOtp}
+                >
+                  Verify email
+                </li>
+              )}
+
+              <li
+                className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10"
+                onClick={logout}
+              >
+                Logout
+              </li>
             </ul>
           </div>
         </div>
@@ -53,3 +96,4 @@ export default function Navbar() {
     </nav>
   );
 }
+///dfdfdsfdsfdffdfdsfdsfdsf
